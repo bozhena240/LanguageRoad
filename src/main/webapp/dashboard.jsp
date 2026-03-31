@@ -91,9 +91,10 @@
         <%
             try {
                 Class.forName("com.mysql.cj.jdbc.Driver"); 
-                Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass);
-                PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM vocabulary WHERE language = ? ORDER BY id DESC");
+                Connection conn = DriverManager.getConnection(dbUrl, dbUser, dbPass);             
+                PreparedStatement pstmt = conn.prepareStatement("SELECT * FROM vocabulary WHERE language = ? AND username = ? ORDER BY id DESC");
                 pstmt.setString(1, currentLang); 
+                pstmt.setString(2, (String) session.getAttribute("loggedUser"));              
                 ResultSet rs = pstmt.executeQuery();
 
                 while (rs.next()) {
@@ -146,6 +147,7 @@
         <div style="display: flex; justify-content: space-between; gap: 10px;">
             <a href="menu.jsp" class="back-btn">← Back to LanguageRoad</a>
             <a href="study.jsp?lang=<%= currentLang %>" class="back-btn" style="background-color: var(--primary);">🧠 Enter Study Mode</a>
+            
         </div>
     </div>
 

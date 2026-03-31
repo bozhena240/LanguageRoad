@@ -109,6 +109,10 @@
 <body>
 
     <div class="container">
+        
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="logout" style="color: var(--primary-accent); text-decoration: none; font-weight: bold; border: 2px solid var(--primary-accent); padding: 8px 16px; border-radius: 8px;">Log Out</a>
+        </div>
         <div class="intro-card">
             <h1>Welcome to LanguageRoad</h1>
             <p class="lead">Your journey to fluency starts here. Choose your path below.</p>
