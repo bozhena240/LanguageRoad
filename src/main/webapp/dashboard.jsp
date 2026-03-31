@@ -1,8 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.util.Properties" %>
 <%
+    if (session.getAttribute("loggedUser") == null) {
+        response.sendRedirect("index.jsp");
+        return; 
+    }
+
     String currentLang = (String) request.getAttribute("activeLanguage");
+    
+    if (currentLang == null) { currentLang = request.getParameter("lang"); }
     if (currentLang == null) { currentLang = "chinese"; } 
+    
     String displayLang = currentLang.substring(0, 1).toUpperCase() + currentLang.substring(1);
 
     String wordLabel = ""; String wordPlaceholder = ""; String pronLabel = ""; String pronPlaceholder = ""; String pronRequired = "required"; String engPlaceholder = "";
@@ -100,7 +108,6 @@
 
                     out.println("<li>");
                     
-                    
                     out.println("<div class='list-row' id='view-" + wordId + "'>");
                     out.println("  <div class='word-info'>");
                     out.println("    <span><strong>" + target + "</strong>" + pronOutput + "</span>");
@@ -116,7 +123,6 @@
                     out.println("    </form>");
                     out.println("  </div>");
                     out.println("</div>");
-                    
                     
                     out.println("<form action='editWord' method='POST' class='inline-edit-form' id='edit-" + wordId + "'>");
                     out.println("  <input type='hidden' name='id' value='" + wordId + "'>");
@@ -138,7 +144,7 @@
         </ul>
         <br>
         <div style="display: flex; justify-content: space-between; gap: 10px;">
-            <a href="app" class="back-btn">← Back to LanguageRoad</a>
+            <a href="menu.jsp" class="back-btn">← Back to LanguageRoad</a>
             <a href="study.jsp?lang=<%= currentLang %>" class="back-btn" style="background-color: var(--primary);">🧠 Enter Study Mode</a>
         </div>
     </div>

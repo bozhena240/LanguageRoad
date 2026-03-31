@@ -3,129 +3,43 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>LanguageRoad - Start Your Journey</title>
+    <title>Welcome to LanguageRoad</title>
     <style>
-      
-        :root {
-            --bg-color: #FDF0D5; /* Varden (Creamy background) */
-            --text-color: #003049; /* Cosmos Blue */
-            --card-bg: #FFFFFF; /* Clean white */
-            --primary-accent: #C1121F; /* Crimson Blaze */
-            --secondary-accent: #669BBC; /* Blue Marble (Soft blue for borders) */
-            --shadow: 0 4px 15px rgba(0, 48, 73, 0.1); /* Cosmos blue tinted shadow */
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 40px;
-        }
-
-        .container {
-            text-align: center;
-            max-width: 800px;
-        }
-
-        .intro-card {
-            background-color: var(--card-bg);
-            padding: 60px;
-            border-radius: 20px;
-            box-shadow: var(--shadow);
-            margin-bottom: 50px;
-            border-top: 8px solid var(--primary-accent); /* Crimson Blaze accent line */
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            color: var(--text-color);
-        }
-
-        p.lead {
-            font-size: 1.5rem;
-            margin-bottom: 40px;
-            color: var(--secondary-accent); /* Blue Marble for the subtitle */
-        }
-
-        .language-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-            width: 100%;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .lang-button {
-            background-color: var(--card-bg);
-            border: 2px solid var(--secondary-accent);
-            border-radius: 12px;
-            padding: 25px;
-            text-decoration: none;
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            transition: all 0.3s ease;
-            box-shadow: var(--shadow);
-        }
-
-        .lang-button:hover {
-            transform: translateY(-5px);
-            border-color: var(--primary-accent);
-            background-color: #FFF9F9; /* Very slight red tint */
-            box-shadow: 0 8px 25px rgba(193, 18, 31, 0.2); /* Crimson shadow */
-        }
-
-        .lang-button:active {
-            transform: translateY(2px);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-        .flag-icon {
-            font-size: 4rem;
-            margin-bottom: 15px;
-        }
-
-        .lang-name {
-            font-size: 1.4rem;
-            font-weight: bold;
-        }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #2c3e50; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .auth-container { background: white; color: #333; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; }
+        h1 { color: #2980b9; margin-bottom: 5px; }
+        p { color: #7f8c8d; margin-bottom: 30px; }
+        input[type='text'], input[type='password'] { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #ecf0f1; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { width: 100%; background-color: #2980b9; color: white; padding: 15px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; margin-bottom: 10px; transition: 0.3s; }
+        button:hover { background-color: #34495e; }
+        .error { color: #e74c3c; font-weight: bold; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="intro-card">
-            <h1>Welcome to LanguageRoad</h1>
-            <p class="lead">Your journey to fluency starts here. Choose your path below.</p>
-        </div>
+    <div class="auth-container">
+        <h1>LanguageRoad</h1>
+        <p>Your personal polyglot database.</p>
+        
+        <% if(request.getParameter("error") != null) { %>
+            <div class="error">Invalid username or password.</div>
+        <% } %>
 
-        <div class="language-grid">
-            <a href="app?lang=chinese" class="lang-button">
-                <span class="flag-icon">🇨🇳</span>
-                <span class="lang-name">Chinese</span>
-            </a>
-            <a href="app?lang=russian" class="lang-button">
-                <span class="flag-icon">🇷🇺</span>
-                <span class="lang-name">Russian</span>
-            </a>
-            <a href="app?lang=turkish" class="lang-button">
-                <span class="flag-icon">🇹🇷</span>
-                <span class="lang-name">Turkish</span>
-            </a>
-            <a href="app?lang=italian" class="lang-button">
-                <span class="flag-icon">🇮🇹</span>
-                <span class="lang-name">Italian</span>
-            </a>
-        </div>
+        <form action="auth" method="POST">
+            <input type="hidden" name="action" value="login">
+            <input type="text" name="username" required placeholder="Username">
+            <input type="password" name="password" required placeholder="Password">
+            <button type="submit">Log In</button>
+        </form>
+
+        <hr style="border: 1px solid #ecf0f1; margin: 20px 0;">
+
+        <form action="auth" method="POST">
+            <input type="hidden" name="action" value="register">
+            <input type="text" name="username" required placeholder="New Username">
+            <input type="password" name="password" required placeholder="New Password">
+            <button type="submit" style="background-color: #27ae60;">Create Account</button>
+        </form>
     </div>
 
 </body>
