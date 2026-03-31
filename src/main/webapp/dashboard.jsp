@@ -5,32 +5,20 @@
     if (currentLang == null) { currentLang = "chinese"; } 
     String displayLang = currentLang.substring(0, 1).toUpperCase() + currentLang.substring(1);
 
-    String wordLabel = "";
-    String wordPlaceholder = "";
-    String pronLabel = "";
-    String pronPlaceholder = "";
-    String pronRequired = "required"; 
-    String engPlaceholder = "";
+    String wordLabel = ""; String wordPlaceholder = ""; String pronLabel = ""; String pronPlaceholder = ""; String pronRequired = "required"; String engPlaceholder = "";
 
     switch(currentLang) {
-        case "chinese":
-            wordLabel = "Chinese Character:"; wordPlaceholder = "e.g., 猫"; pronLabel = "Pinyin:"; pronPlaceholder = "e.g., māo"; engPlaceholder = "e.g., Cat"; break;
-        case "russian":
-            wordLabel = "Russian Word (Cyrillic):"; wordPlaceholder = "e.g., Спасибо"; pronLabel = "Pronunciation:"; pronPlaceholder = "e.g., spa-SI-bo"; engPlaceholder = "e.g., Thank you"; break;
-        case "turkish":
-            wordLabel = "Turkish Word:"; wordPlaceholder = "e.g., Merhaba"; pronLabel = "Pronunciation (Optional):"; pronPlaceholder = "e.g., mer-ha-ba"; pronRequired = ""; engPlaceholder = "e.g., Hello"; break;
-        case "italian":
-            wordLabel = "Italian Word:"; wordPlaceholder = "e.g., Gatto"; pronLabel = "Pronunciation (Optional):"; pronPlaceholder = "e.g., gah-toh"; pronRequired = ""; engPlaceholder = "e.g., Cat"; break;
-        default:
-            wordLabel = "Target Word:"; wordPlaceholder = "e.g., Word"; pronLabel = "Pronunciation:"; pronPlaceholder = "e.g., Pronunciation"; engPlaceholder = "e.g., Meaning";
+        case "chinese": wordLabel = "Chinese Character:"; wordPlaceholder = "e.g., 猫"; pronLabel = "Pinyin:"; pronPlaceholder = "e.g., māo"; engPlaceholder = "e.g., Cat"; break;
+        case "russian": wordLabel = "Russian Word (Cyrillic):"; wordPlaceholder = "e.g., Спасибо"; pronLabel = "Pronunciation:"; pronPlaceholder = "e.g., spa-SI-bo"; engPlaceholder = "e.g., Thank you"; break;
+        case "turkish": wordLabel = "Turkish Word:"; wordPlaceholder = "e.g., Merhaba"; pronLabel = "Pronunciation (Optional):"; pronPlaceholder = "e.g., mer-ha-ba"; pronRequired = ""; engPlaceholder = "e.g., Hello"; break;
+        case "italian": wordLabel = "Italian Word:"; wordPlaceholder = "e.g., Gatto"; pronLabel = "Pronunciation (Optional):"; pronPlaceholder = "e.g., gah-toh"; pronRequired = ""; engPlaceholder = "e.g., Cat"; break;
+        default: wordLabel = "Target Word:"; wordPlaceholder = "e.g., Word"; pronLabel = "Pronunciation:"; pronPlaceholder = "e.g., Pronunciation"; engPlaceholder = "e.g., Meaning";
     }
 
     Properties props = new Properties();
     java.io.InputStream inStream = Thread.currentThread().getContextClassLoader().getResourceAsStream("db.properties");
     if (inStream != null) { props.load(inStream); }
-    String dbUrl = props.getProperty("db.url");
-    String dbUser = props.getProperty("db.user");
-    String dbPass = props.getProperty("db.password");
+    String dbUrl = props.getProperty("db.url"); String dbUser = props.getProperty("db.user"); String dbPass = props.getProperty("db.password");
 %>
 <!DOCTYPE html>
 <html data-theme="<%= currentLang %>">
@@ -55,23 +43,28 @@
         button:hover { opacity: 0.8; }
         
         ul { list-style-type: none; padding: 0; }
-               
-        li { background: var(--bg-color); margin: 10px 0; padding: 15px; border-radius: 8px; font-size: 18px; display: flex; align-items: center; justify-content: space-between; border-left: 5px solid var(--secondary); text-align: left;}
+        li { background: var(--bg-color); margin: 10px 0; padding: 15px; border-radius: 8px; font-size: 18px; display: flex; flex-direction: column; border-left: 5px solid var(--secondary); text-align: left;}
+        
+        .list-row { display: flex; align-items: center; justify-content: space-between; width: 100%; }
         .word-info { flex-grow: 1; display: flex; justify-content: space-between; margin-right: 15px; }
         
-        
-        .delete-btn { background-color: transparent; color: var(--accent); padding: 5px 10px; font-size: 14px; margin: 0; border: 1px solid var(--accent); border-radius: 4px; }
+        .action-buttons { display: flex; gap: 5px; }
+        .action-btn { background-color: transparent; padding: 5px 10px; font-size: 14px; margin: 0; border-radius: 4px; cursor: pointer;}
+        .edit-btn { color: var(--primary); border: 1px solid var(--primary); }
+        .edit-btn:hover { background-color: var(--primary); color: white; }
+        .delete-btn { color: var(--accent); border: 1px solid var(--accent); }
         .delete-btn:hover { background-color: var(--accent); color: white; }
-        .delete-form { margin: 0; padding: 0; display: inline-block; }
+        
+        .inline-edit-form { display: none; width: 100%; margin-top: 15px; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); }
+        .inline-edit-form input[type='text'] { margin-bottom: 10px; padding: 8px; }
+        .inline-edit-form .save-edit-btn { padding: 10px; background-color: var(--secondary); }
         
         .back-btn { display: inline-block; padding: 10px 20px; background-color: var(--text-dark); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1><%= displayLang %></h1>
-    </div>
+    <div class="header"><h1><%= displayLang %></h1></div>
 
     <div class="card">
         <h2>Add a New Word</h2>
@@ -96,30 +89,51 @@
                 ResultSet rs = pstmt.executeQuery();
 
                 while (rs.next()) {
-                    
                     int wordId = rs.getInt("id");
+                    String target = rs.getString("target_word");
+                    String pronRaw = rs.getString("pronunciation");
+                    String eng = rs.getString("english_meaning");
                     
-                    String pronOutput = rs.getString("pronunciation");
+                    String pronOutput = pronRaw;
                     if (pronOutput != null && !pronOutput.trim().isEmpty()) { pronOutput = " (" + pronOutput + ")"; } else { pronOutput = ""; }
+                    if (pronRaw == null) pronRaw = ""; 
 
                     out.println("<li>");
-                    out.println("<div class='word-info'>");
-                    out.println("<span><strong>" + rs.getString("target_word") + "</strong>" + pronOutput + "</span>");
-                    out.println("<span>" + rs.getString("english_meaning") + "</span>");
+                    
+                    
+                    out.println("<div class='list-row' id='view-" + wordId + "'>");
+                    out.println("  <div class='word-info'>");
+                    out.println("    <span><strong>" + target + "</strong>" + pronOutput + "</span>");
+                    out.println("    <span>" + eng + "</span>");
+                    out.println("  </div>");
+                    out.println("  <div class='action-buttons'>");
+                    
+                    out.println("    <button type='button' class='action-btn edit-btn' onclick='toggleEdit(" + wordId + ")'>Edit</button>");
+                    out.println("    <form action='deleteWord' method='POST' style='margin:0; padding:0;'>");
+                    out.println("      <input type='hidden' name='id' value='" + wordId + "'>");
+                    out.println("      <input type='hidden' name='language' value='" + currentLang + "'>");
+                    out.println("      <button type='submit' class='action-btn delete-btn'>Delete</button>");
+                    out.println("    </form>");
+                    out.println("  </div>");
                     out.println("</div>");
-                                       
-                    out.println("<form action='deleteWord' method='POST' class='delete-form'>");
-                    out.println("<input type='hidden' name='id' value='" + wordId + "'>");
-                    out.println("<input type='hidden' name='language' value='" + currentLang + "'>");
-                    out.println("<button type='submit' class='delete-btn'>Delete</button>");
+                    
+                    
+                    out.println("<form action='editWord' method='POST' class='inline-edit-form' id='edit-" + wordId + "'>");
+                    out.println("  <input type='hidden' name='id' value='" + wordId + "'>");
+                    out.println("  <input type='hidden' name='language' value='" + currentLang + "'>");
+                    out.println("  <input type='text' name='targetWord' value='" + target + "' required>");
+                    out.println("  <input type='text' name='pronunciation' value='" + pronRaw + "' " + pronRequired + ">");
+                    out.println("  <input type='text' name='englishMeaning' value='" + eng + "' required>");
+                    out.println("  <div style='display:flex; gap:10px;'>");
+                    out.println("    <button type='submit' class='save-edit-btn' style='flex:1;'>Save Changes</button>");
+                    out.println("    <button type='button' class='action-btn' style='flex:1;' onclick='toggleEdit(" + wordId + ")'>Cancel</button>");
+                    out.println("  </div>");
                     out.println("</form>");
-                                     
+
                     out.println("</li>");
                 }
                 conn.close();
-            } catch (Exception e) {
-                out.println("<p style='color:red;'>Database Error: " + e.getMessage() + "</p>");
-            }
+            } catch (Exception e) { out.println("<p style='color:red;'>DB Error: " + e.getMessage() + "</p>"); }
         %>
         </ul>
         <br>
@@ -129,5 +143,19 @@
         </div>
     </div>
 
+    <script>
+        function toggleEdit(id) {
+            let viewDiv = document.getElementById('view-' + id);
+            let editForm = document.getElementById('edit-' + id);
+            
+            if (editForm.style.display === 'block') {
+                editForm.style.display = 'none';
+                viewDiv.style.display = 'flex';
+            } else {
+                editForm.style.display = 'block';
+                viewDiv.style.display = 'none';
+            }
+        }
+    </script>
 </body>
 </html>
