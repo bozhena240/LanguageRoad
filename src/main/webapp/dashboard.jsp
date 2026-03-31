@@ -1,16 +1,17 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.util.Properties" %>
 <%
-    // 1. Figure out which language page we are on
+    
     String currentLang = (String) request.getAttribute("activeLanguage");
     if (currentLang == null) { currentLang = "chinese"; } 
     String displayLang = currentLang.substring(0, 1).toUpperCase() + currentLang.substring(1);
 
-    // --- NEW: DYNAMIC LOCALIZATION LOGIC ---
+    
     String wordLabel = "";
     String wordPlaceholder = "";
     String pronLabel = "";
     String pronPlaceholder = "";
+    String pronRequired = "required"; 
     String engPlaceholder = "";
 
     switch(currentLang) {
@@ -33,6 +34,7 @@
             wordPlaceholder = "e.g., Merhaba";
             pronLabel = "Pronunciation (Optional):";
             pronPlaceholder = "e.g., mer-ha-ba";
+            pronRequired = ""; // <-- NEW: Turns off the requirement!
             engPlaceholder = "e.g., Hello";
             break;
         case "italian":
@@ -40,6 +42,7 @@
             wordPlaceholder = "e.g., Gatto";
             pronLabel = "Pronunciation (Optional):";
             pronPlaceholder = "e.g., gah-toh";
+            pronRequired = ""; // <-- NEW: Turns off the requirement!
             engPlaceholder = "e.g., Cat";
             break;
         default:
@@ -64,7 +67,7 @@
     <meta charset="UTF-8">
     <title>LanguageRoad - <%= displayLang %></title>
     <style>
-        
+      
         [data-theme="chinese"] 
         { --bg-color: #FDF0D5; 
           --primary: #930014; 
@@ -73,22 +76,22 @@
           --text-dark: #5B000B; 
           --card-bg: #FFFFFF; }
           
-        [data-theme="russian"]
+        [data-theme="russian"] 
         { --bg-color: #F7EFE0; 
-        --primary: #0A1D49; 
-        --secondary: #CC8E4A; 
-        --accent: #8E0018; 
-        --text-dark: #171721; 
-        --card-bg: #FFFFFF; }
-        
+         --primary: #0A1D49;  
+         --secondary: #CC8E4A; 
+         --accent: #8E0018; 
+         --text-dark: #171721;
+         --card-bg: #FFFFFF; }
+         
         [data-theme="turkish"] 
         { --bg-color: #D1C4CE; 
-        --primary: #223857; 
-        --secondary: #E8A121; 
-        --accent: #A12E24; 
-        --text-dark: #223857; 
-        --card-bg: #FFFFFF; }
-        
+          --primary: #223857; 
+          --secondary: #E8A121;
+          --accent: #A12E24; 
+          --text-dark: #223857; 
+          --card-bg: #FFFFFF; }
+          
         [data-theme="italian"] 
         { --bg-color: #F0F8FF; 
           --primary: #004B7D; 
@@ -97,69 +100,24 @@
           --text-dark: #004B7D; 
           --card-bg: #FFFFFF; }
 
-        
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; 
-        background-color: var(--bg-color); 
-        color: var(--text-dark); 
-        margin: 0; 
-        padding: 40px; 
-        display: flex; 
-        flex-direction: column; 
-        align-items: center; 
-        transition: background-color 0.5s ease; }
+       
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: var(--bg-color); color: var(--text-dark); margin: 0; padding: 40px; display: flex; flex-direction: column; align-items: center; transition: background-color 0.5s ease; }
         .header { text-align: center; margin-bottom: 20px; }
-        h1 { color: var(--primary); 
-        font-size: 3rem; 
-        border-bottom: 4px solid var(--secondary); 
-        padding-bottom: 10px; 
-        display: inline-block; 
-        margin-bottom: 0;}
+        h1 { color: var(--primary); font-size: 3rem; border-bottom: 4px solid var(--secondary); padding-bottom: 10px; display: inline-block; margin-bottom: 0;}
         
         .card { background-color: var(--card-bg); padding: 30px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 600px; border-top: 8px solid var(--accent); text-align: center; margin-bottom: 30px; }
         
-        form { display: flex; 
-        flex-direction: column; 
-        text-align: left; 
-        margin-top: 20px; }
-        label { font-weight: bold; 
-        margin-bottom: 5px; 
-        color: var(--text-dark); }
-        input[type='text'] { width: 100%; 
-        padding: 12px; 
-        margin-bottom: 20px; 
-        border: 2px solid var(--bg-color); 
-        border-radius: 6px; 
-        box-sizing: border-box; 
-        font-size: 16px; }
-        button { background-color: var(--primary); 
-        color: white; 
-        padding: 15px; 
-        border: none; 
-        border-radius: 6px; 
-        cursor: pointer; 
-        font-size: 16px; 
-        font-weight: bold; 
-        transition: opacity 0.3s; }
+        
+        form { display: flex; flex-direction: column; text-align: left; margin-top: 20px; }
+        label { font-weight: bold; margin-bottom: 5px; color: var(--text-dark); }
+        input[type='text'] { width: 100%; padding: 12px; margin-bottom: 20px; border: 2px solid var(--bg-color); border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { background-color: var(--primary); color: white; padding: 15px; border: none; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; transition: opacity 0.3s; }
         button:hover { opacity: 0.8; }
         
         ul { list-style-type: none; padding: 0; }
-        li { background: var(--bg-color); 
-        margin: 10px 0; 
-        padding: 15px; 
-        border-radius: 8px; 
-        font-size: 18px; 
-        display: flex; 
-        justify-content: space-between; 
-        border-left: 5px solid var(--secondary); 
-        text-align: left;}
+        li { background: var(--bg-color); margin: 10px 0; padding: 15px; border-radius: 8px; font-size: 18px; display: flex; justify-content: space-between; border-left: 5px solid var(--secondary); text-align: left;}
         
-        .back-btn { display: inline-block; 
-        padding: 10px 20px; 
-        background-color: var(--text-dark); 
-        color: white; 
-        text-decoration: none; 
-        border-radius: 8px; 
-        font-weight: bold; }
+        .back-btn { display: inline-block; padding: 10px 20px; background-color: var(--text-dark); color: white; text-decoration: none; border-radius: 8px; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -177,7 +135,7 @@
             <input type="text" name="targetWord" required placeholder="<%= wordPlaceholder %>">
             
             <label><%= pronLabel %></label> 
-            <input type="text" name="pronunciation" required placeholder="<%= pronPlaceholder %>">
+            <input type="text" name="pronunciation" <%= pronRequired %> placeholder="<%= pronPlaceholder %>">
             
             <label>English Meaning:</label> 
             <input type="text" name="englishMeaning" required placeholder="<%= engPlaceholder %>">
@@ -201,7 +159,15 @@
 
                 while (rs.next()) {
                     out.println("<li>");
-                    out.println("<span><strong>" + rs.getString("target_word") + "</strong> (" + rs.getString("pronunciation") + ")</span>");
+                    
+                    String pronOutput = rs.getString("pronunciation");
+                    if (pronOutput != null && !pronOutput.trim().isEmpty()) {
+                        pronOutput = " (" + pronOutput + ")";
+                    } else {
+                        pronOutput = "";
+                    }
+
+                    out.println("<span><strong>" + rs.getString("target_word") + "</strong>" + pronOutput + "</span>");
                     out.println("<span>" + rs.getString("english_meaning") + "</span>");
                     out.println("</li>");
                 }
