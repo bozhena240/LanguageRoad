@@ -123,7 +123,10 @@
         %>
         </ul>
         <br>
-        <a href="app" class="back-btn">← Back to LanguageRoad</a>
+        <div style="display: flex; justify-content: space-between; gap: 10px;">
+            <a href="app" class="back-btn">← Back to LanguageRoad</a>
+            <a href="study.jsp?lang=<%= currentLang %>" class="back-btn" style="background-color: var(--primary);">🧠 Enter Study Mode</a>
+        </div>
     </div>
 
 </body>
