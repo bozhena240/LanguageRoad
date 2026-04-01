@@ -5,7 +5,14 @@
     <meta charset="UTF-8">
     <title>Welcome to LanguageRoad</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, sans-serif; background-color: #2c3e50; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; 
+        background-color: #FDF0D5; 
+        color: white; 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        height: 100vh; 
+        margin: 0; }
         .auth-container { background: white; color: #333; padding: 40px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); width: 100%; max-width: 400px; text-align: center; }
         h1 { color: #2980b9; margin-bottom: 5px; }
         p { color: #7f8c8d; margin-bottom: 30px; }
