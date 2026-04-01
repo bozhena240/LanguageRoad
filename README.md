@@ -13,7 +13,7 @@ This project was engineered using a modern MVC (Model-View-Controller) architect
 * **Database:** Remote MySQL database hosted securely in Europe via Aiven.
 * **Containerization:** Packaged using Docker with an official Tomcat 9 / Java 21 runtime environment.
 * **Deployment:** Continuously deployed and hosted in the cloud via Render.com.
-* 
+  
 ## Key Features
 * **Secure Authentication:** User registration and login utilizing HTTP session tracking to ensure privacy.
 * **Multi-Tenant Architecture:** Users only see and manage their own personalized vocabulary lists.
