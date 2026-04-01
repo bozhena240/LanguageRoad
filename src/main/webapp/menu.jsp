@@ -109,10 +109,14 @@
 <body>
 
     <div class="container">
-        
-        <div style="text-align: right; margin-bottom: 20px;">
-            <a href="logout" style="color: var(--primary-accent); text-decoration: none; font-weight: bold; border: 2px solid var(--primary-accent); padding: 8px 16px; border-radius: 8px;">Log Out</a>
+      
+      <div style="display: flex; justify-content: flex-end; align-items: center; gap: 15px; margin-bottom: 20px;">
+            <span style="font-weight: bold; color: var(--text-color); font-size: 1.2rem;">
+                Welocme, <%= session.getAttribute("loggedUser") %>!
+            </span>
+            <a href="logout" style="color: var(--primary-accent); text-decoration: none; font-weight: bold; border: 2px solid var(--primary-accent); padding: 8px 16px; border-radius: 8px; transition: all 0.3s ease;">Log Out</a>
         </div>
+        
         <div class="intro-card">
             <h1>Welcome to LanguageRoad</h1>
             <p class="lead">Your journey to fluency starts here. Choose your path below.</p>
